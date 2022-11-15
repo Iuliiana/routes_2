@@ -1,30 +1,24 @@
-import React, {useEffect, useRef, useState} from 'react';
+import React, {useState} from 'react';
 import {Form} from "react-bootstrap";
 import Button from "react-bootstrap/Button";
+import {useNavigate} from "react-router-dom";
+import {postFetch} from "../../tools/http";
 
 
 const NewPostsForm = () => {
     const [form, setForm] = useState({});
+    const navigate = useNavigate();
 
     const handleFormSubmit = (form) => {
-        let formData = {...form, id:0}
-        fetch(process.env.REACT_APP_POSTS, {
-            method: "post",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify(formData),
-        })
-            .then((response) => response.status)
-            .then((data) => {
-                console.log('data')
-                console.log(data)
-            })
-            .catch((error) => {
-                console.log('error')
-                console.log(error)
+        let formData = {...form, id: 0}
 
-            });
+        postFetch(process.env.REACT_APP_POSTS, formData)
+            .then((data) => {
+                if (data.success === true) {
+                    navigate('/')
+                }
+            })
+            .catch((error) => console.log(error));
     }
 
     const handleFormChange = ({target}) => {

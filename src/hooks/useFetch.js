@@ -3,7 +3,7 @@ import {useEffect, useState} from "react";
 export default function useFetch(url, opts = {}) {
     const [data, setData] = useState();
     const [loading, setLoading] = useState(false);
-    const [error, setError] = useState('');
+    const [error, setError] = useState({code: '', message: ''});
 
     useEffect(() => {
         const controller = new AbortController();
@@ -11,14 +11,15 @@ export default function useFetch(url, opts = {}) {
             .then(response => response.json())
             .then(data => {
                 if (!data) {
-                    setError('Query error! ' + url + ' empty data.')
+                    setError({code: data.status, message: 'Query error! ' + url + ' empty data.'})
                 } else if (data.status < 200 && data.status > 300) {
-                    setError('Query Error! Status query - ' + data.status)
+                    setError({code: data.status, message: 'Query Error! Status query - ' + data.status})
                 } else {
                     setData(data)
                 }
             }).catch(error => {
-            setError('Query Error! ' + error.message)
+                console.log(error)
+            setError({code: 404, message: 'Query Error! ' + error.message})
         }).finally(() => {
             setLoading(true)
         })

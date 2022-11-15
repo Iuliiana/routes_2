@@ -1,77 +1,72 @@
-import React, {useEffect, useRef, useState} from 'react';
-import {useParams} from "react-router-dom";
+import React, {useEffect, useState} from 'react';
+import {useParams, useNavigate} from "react-router-dom";
 import {Badge, Card} from "react-bootstrap";
-import useFetch from "../../hooks/useFetch";
 import moment from 'moment';
-import {useDeleteFetch} from "../../tools/http";
+import useFetch from "../../hooks/useFetch";
+import {deleteFetch, getFetch, postFetch} from "../../tools/http";
+import {Notfound} from "../Notfound";
 
 //
- const PostsDetail = () => {
-     const {postId} = useParams();
-     const [isDeletePost, deletePost] = useState();
-     console.log(postId)
-     const [postData, setPostData] = useState();
+const PostsDetail = () => {
+    const {postId} = useParams();
+    const [post, isLoading, error] = useFetch(process.env.REACT_APP_POSTS + '/' + postId);
+    const navigate = useNavigate();
+    const [editMode, setEditMode] = useState(false)
+    const [postEdit, setPostEdit] = useState()
 
-     useEffect(() => {
-         const controller = new AbortController();
-         fetch(process.env.REACT_APP_POSTS + '/' + postId)
-             .then(response => response.json())
-             .then(data => {
-                 if (!data) {
-                     console.log('Query error! ' + ' empty data.')
-                 } else if (data.status < 200 && data.status > 300) {
-                     console.log('Query Error! Status query - ' + data.status)
-                 } else {
-                     setPostData(data)
-                 }
-             }).catch(error => {
-         })
-         return () => controller.abort()
-     }, [])
+    useEffect(() => {
+        if (isLoading) {
+            setPostEdit(post.content)
+        }
+    }, [isLoading])
 
-
-//     const {postId} = useParams();
-//     const [isDeletePost, deletePost] = useState();
-//     const [postData, isLoading] = useFetch(process.env.REACT_APP_POSTS + '/' + postId);
-//
-//     console.log(isDeletePost)
-//
-
-        // fetch(process.env.REACT_APP_POSTS + '/' + postId, {
-        //     method: "delete"
-        // })
-        //     .then(response => response.json())
-        //     .then(data => {
-        //         if (!data) {
-        //             console.log('Query error! ' + process.env.REACT_APP_POSTS + '/' + postId + ' empty data.')
-        //         } else if (data.status < 200 && data.status > 300) {
-        //             console.log('Query Error! Status query - ' + data.status)
-        //         } else {
-        //             return (data)
-        //         }
-        //     }).catch(error => {
-        //     console.log('Query Error! ' + error.message)
-        // })
-
-   // const [data, loading, error] = useDeleteFetch(process.env.REACT_APP_POSTS + '/' + postId)
-//
-    const deletePostHandler = () => {
-        console.log('delete')
+    const handleDeleteClick = () => {
+        deleteFetch(process.env.REACT_APP_POSTS + '/' + postId)
+            .then((data) => {
+                if (data.success === true) {
+                    navigate(`/`);
+                }
+            })
+            .catch((error) => console.log(error.message()));
     }
+
+    const handleEditClick = () => {
+        setEditMode( prevState => !prevState)
+    }
+
+    const handleChange = (e) => {
+        setPostEdit(e.target.value)
+    }
+
+    const handleClick = () => {
+
+        postFetch(process.env.REACT_APP_POSTS, {id: postId, content: postEdit})
+            .then((data) => {
+                if (data.success === true) {
+                    setEditMode( prevState => !prevState)
+                    post.content = postEdit;
+                }
+            })
+            .catch((error) => console.log(error));
+
+    }
+
+
+
 
     return (
         <>
-            {postData &&
+            {(isLoading && !error.message) &&
                 <div>
-                    <div className="buttons">
-                        <button>✎</button>
+                    { !editMode &&  <div className="buttons">
+                        <button onClick={handleEditClick}>✎</button>
                         {' '}
-                        <button onClick={deletePostHandler}>✘</button>
-                    </div>
+                        <button onClick={handleDeleteClick}>✘</button>
+                    </div>}
                     <br/>
                     <br/>
                     <h2>
-                        <Badge bg="secondary">{postId}</Badge> {postData.title}
+                        <Badge bg="secondary">{postId}</Badge> {post.title}
                     </h2>
                     <br/>
                     <Card>
@@ -82,28 +77,34 @@ import {useDeleteFetch} from "../../tools/http";
                         </Card.Body>
                     </Card>
 
-                    <p>
-                        {postData.content}
-                    </p>
+                    {!editMode
+                    ? <p>{post.content}</p>
+                    : <>
+                            <textarea name="" id="" cols="30" rows="10" value={postEdit} onChange={(e) =>handleChange(e)}/>
+                            <button onClick={handleClick}>save</button>
+                            <button onClick={handleEditClick}>✘</button>
+                        </>
+                    }
+
                     <br/>
                     <br/>
                     <br/>
                     <blockquote className="blockquote mb-0">
-                        <footer className="blockquote-footer">{postData.author_name}
+                        <footer className="blockquote-footer">{post.author_name}
                             <br/>
-                            <cite title="Source Title"> mail: {postData.author_email}</cite>
+                            <cite title="Source Title"> mail: {post.author_email}</cite>
                             <br/>
-                            <cite title="Source Title">{moment().to(postData.created)}</cite>
+                            <cite title="Source Title">{moment().to(post.created)}</cite>
                         </footer>
                     </blockquote>
 
                 </div>
             }
 
-
+            {isLoading && error.message && error.code === 404 && <Notfound/>}
         </>
 
     );
- }
+}
 
 export {PostsDetail};
