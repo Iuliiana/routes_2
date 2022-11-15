@@ -1,25 +1,30 @@
-import logo from './logo.svg';
+import 'bootstrap/dist/css/bootstrap.min.css';
 import './App.css';
+import {Route, Routes} from "react-router-dom";
+import {Layout} from "./components/Layout";
+import {Posts} from "./pages/posts/Posts";
+import {PostsDetail} from "./pages/posts/PostsDetail";
+import {Notfound} from "./pages/Notfound";
+import {NewPosts} from "./pages/posts/NewPosts";
 
 function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+    return (
+        <Routes>
+            <Route path='/' element={<Layout/>}>
+                <Route index element={<Posts/>}/>
+                <Route path="/posts/:postId" element={<PostsDetail/>}/>
+                <Route path="/posts/new" element={<NewPosts/>}/>
+                <Route path='*' element={<Notfound/>}/>
+            </Route>
+        </Routes>
+    );
 }
 
+
 export default App;
+
+
+// Кнопка «Создать пост» ведёт на страницу добавления (см. ниже) /posts/new. Помните про регулярные выражения.
+//
+//     При клике на саму карточку происходит переход на страницу просмотра поста (см. ниже) /posts/{postId}.
+

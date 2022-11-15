@@ -11,3 +11,36 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+.wrapper {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 2rem 5%;
+}
+
+.wrapper ul {
+  padding-left: 0;
+}
+
+.wrapper a {
+  text-decoration: none;
+  color: inherit;
+}
+
+.card {
+  margin-bottom: 1rem;
+}
+
+.buttons {
+  display: flex;
+  justify-content: end;
+}
+
+.buttons button {
+  margin-left: 1rem;
+}
+
+.nav-item {
+  display: inline-block;
+  margin-right: 20px;
+}
