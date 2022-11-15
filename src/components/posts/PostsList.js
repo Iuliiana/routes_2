@@ -7,7 +7,7 @@ const PostsList = (props) => {
         <ul>
             {props.postsData?.map((post) => {
                 return (
-                  <PostCard key={post.id} {...post} />
+                    <PostCard key={post.id} {...post} />
                 );
             })}
         </ul>

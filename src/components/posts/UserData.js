@@ -17,6 +17,6 @@ UserData.propTypes = {
     email: propTypes.string.isRequired,
 };
 
-export { UserData };
+export {UserData};
 
 

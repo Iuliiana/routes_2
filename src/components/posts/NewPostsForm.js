@@ -37,7 +37,7 @@ const NewPostsForm = () => {
             </Form.Group>
             <Form.Group className="mb-3">
                 <Form.Label>Email address</Form.Label>
-                <Form.Control name="author_email" type="text" placeholder="name@example.com "
+                <Form.Control name="author_email" type="email" placeholder="name@example.com "
                               onChange={handleFormChange}/>
             </Form.Group>
             <Form.Group className="mb-3">

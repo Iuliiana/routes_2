@@ -19,7 +19,6 @@ export const postFetch = (url, body) => {
 }
 
 export const deleteFetch = (url) => {
-
     return new Promise((resolve, reject) => {
         fetch(url, {
             method: "delete"

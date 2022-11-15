@@ -3,10 +3,10 @@ import {useParams, useNavigate} from "react-router-dom";
 import {Badge, Card} from "react-bootstrap";
 import moment from 'moment';
 import useFetch from "../../hooks/useFetch";
-import {deleteFetch, getFetch, postFetch} from "../../tools/http";
+import {deleteFetch, postFetch} from "../../tools/http";
 import {Notfound} from "../Notfound";
 
-//
+//fixme не хватило времени на декомпозицию страницы
 const PostsDetail = () => {
     const {postId} = useParams();
     const [post, isLoading, error] = useFetch(process.env.REACT_APP_POSTS + '/' + postId);
@@ -34,12 +34,11 @@ const PostsDetail = () => {
         setEditMode( prevState => !prevState)
     }
 
-    const handleChange = (e) => {
+    const handleChangeContent = (e) => {
         setPostEdit(e.target.value)
     }
 
-    const handleClick = () => {
-
+    const handleCloseEditModeBtnClick = () => {
         postFetch(process.env.REACT_APP_POSTS, {id: postId, content: postEdit})
             .then((data) => {
                 if (data.success === true) {
@@ -48,11 +47,7 @@ const PostsDetail = () => {
                 }
             })
             .catch((error) => console.log(error));
-
     }
-
-
-
 
     return (
         <>
@@ -80,8 +75,8 @@ const PostsDetail = () => {
                     {!editMode
                     ? <p>{post.content}</p>
                     : <>
-                            <textarea name="" id="" cols="30" rows="10" value={postEdit} onChange={(e) =>handleChange(e)}/>
-                            <button onClick={handleClick}>save</button>
+                            <textarea name="" id="" cols="30" rows="10" value={postEdit} onChange={(e) =>handleChangeContent(e)}/>
+                            <button onClick={handleCloseEditModeBtnClick}>save</button>
                             <button onClick={handleEditClick}>✘</button>
                         </>
                     }
